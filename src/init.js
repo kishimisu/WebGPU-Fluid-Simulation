@@ -6,19 +6,26 @@ function onMouseMove(e) {
     mouseInfos.current[1] = 1 - e.offsetY / height // y position needs to be inverted
 }
 
+function onWebGPUDetectionError(error) {
+    console.log('Could not initialize WebGPU: ' + error)
+    document.querySelector('.webgpu-not-supported').style.visibility = 'visible'
+    return false
+}
+
 // Init the WebGPU context by checking first if everything is supported
+// Returns true on init success, false otherwise
 async function initContext() {
     if (navigator.gpu == null)
-        throw new Error('WebGPU NOT Supported')
+        return onWebGPUDetectionError('WebGPU NOT Supported')
 
     const adapter = await navigator.gpu.requestAdapter()
-    if (!adapter) throw new Error('No adapter found')
+    if (!adapter) return onWebGPUDetectionError('No adapter found')
 
     device = await adapter.requestDevice()
 
     canvas = document.getElementById("canvas-container")
     context = canvas.getContext("webgpu");
-    if (!context) throw new Error("Canvas does not support WebGPU")
+    if (!context) return onWebGPUDetectionError("Canvas does not support WebGPU")
 
     // If we got here, WebGPU seems to be supported
 
@@ -42,6 +49,8 @@ async function initContext() {
 
     // Init buffer sizes
     initSizes()
+
+    return true
 }
 
 // Init buffer & canvas dimensions to fit the screen while keeping the aspect ratio 

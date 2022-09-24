@@ -10,6 +10,20 @@
         padding: 0;
         overflow: hidden;
       }
+
+      .webgpu-not-supported {
+        visibility: hidden;
+        width: 50%;
+        height: 50%;
+        padding: 1em;
+        margin: auto;
+        border: 4px solid black;
+        border-radius: 4px;
+        background-color: #ffdaba;
+        font-family: monospace;
+        font-size: large;
+        text-align: center;
+      }
     </style>
     <script src="libraries/dat.gui.min.js"></script>
     <script src="libraries/ccapture.all.min.js"></script>
@@ -18,10 +32,21 @@
   <body>
     <canvas id="canvas-container"></canvas>
 
-    <script src="init.js"></script>
-    <script src="shaders.js"></script>
-    <script src="render.js"></script>
-    <script src="utils.js"></script>
-    <script src="main.js"></script>
+    <div class="webgpu-not-supported">
+      <span>
+        WebGPU doesn't appear to be enabled / supported on this browser. 
+        Learn how to enable it here :
+      </span>
+      <br/><br/>
+      <a href="https://developer.chrome.com/en/docs/web-platform/webgpu/#use">
+        https://developer.chrome.com/en/docs/web-platform/webgpu/#use
+      </a>
+    </div>
+
+    <script src="src/init.js"></script>
+    <script src="src/shaders.js"></script>
+    <script src="src/render.js"></script>
+    <script src="src/utils.js"></script>
+    <script src="src/main.js"></script>
   </body>
 </html>

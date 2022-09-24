@@ -13,6 +13,8 @@ I'll update this readme once it will be officially supported.
 The simplest solution that worked for me was to download [Google Chrome Canary](https://www.google.com/chrome/canary/), then navigate to `chrome://flags` and enable `Unsafe WebGPU` & `WebGPU Developer Features` (for better security, don't navigate the web with these features on).
 Other methods can be found [here](https://developer.chrome.com/en/docs/web-platform/webgpu/#use).
 
+Once you have WebGPU enabled, you can start [plagin with the live demo](https://indiana-dev.github.io/WebGPU-Fluid-Simulation/) !
+
 ## Context
 
 I've already tried to create a fluid simulation a few years ago using plain javascript and no GPU, but quickly came to the limitations of intense CPU computing on the web.
@@ -24,11 +26,11 @@ For this simulation, I'm making use of compute shaders to do the calculations in
 ## Project Structure
 
 - `index.html` : web page containing the demo
-- `main.js` : simulation setup & render loop
-- `init.js` : initialization functions (webgpu context, render size & gui)
-- `utils.js` : utility wrappers to handle WebGPU buffers, uniforms and programs
-- `render.js` : program used to render on the canvas
-- `shaders.js` : WGSL strings containing each program's compute shader code
+- `src/main.js` : simulation setup & render loop
+- `src/init.js` : initialization functions (webgpu context, render size & gui)
+- `src/utils.js` : utility wrappers to handle WebGPU buffers, uniforms and programs
+- `src/render.js` : program used to render on the canvas
+- `src/shaders.js` : WGSL strings containing each program's compute shader code
 - `libraries/` : contains the CCapture.js library for canvas recording and the dat.gui.js library for GUI elements
 
 ![Symmetry Demo](assets/demo1.gif)

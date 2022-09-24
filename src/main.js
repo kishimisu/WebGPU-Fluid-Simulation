@@ -27,7 +27,8 @@ const mouseInfos = {
 
 async function main() {
     // Init WebGPU Context
-    await initContext()
+    const initializationSuccess = await initContext()
+    if (!initializationSuccess) return
 
     // Init the recorder (for video export)
     const recorder = new Recorder(reset)
