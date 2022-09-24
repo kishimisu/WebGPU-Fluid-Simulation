@@ -6,10 +6,6 @@ This is my attempt at implementing Jos Stam's [Real-Time Fluid Dynamics for Game
 
 ## Live Demo
 
-<video width="300px" autoplay loop muted>
-    <source src="assets/demo.mp1" type="video/mp4">
-</video>
-
 As WebGPU is still in development, it is not yet available in release builds of recent navigators.
 In order for this demo to run properly, you will have to enable WebGPU experimental features in your browser.
 I'll update this readme once it will be officially supported.
@@ -34,6 +30,8 @@ For this simulation, I'm making use of compute shaders to do the calculations in
 - `render.js` : program used to render on the canvas
 - `shaders.js` : WGSL strings containing each program's compute shader code
 - `libraries/` : contains the CCapture.js library for canvas recording and the dat.gui.js library for GUI elements
+
+![Symmetry Demo](assets/demo1.gif)
 
 ## References
 
