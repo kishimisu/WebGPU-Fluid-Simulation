@@ -6,7 +6,7 @@ const settings = {
     velocity_add_intensity: 0.1,
     velocity_add_radius: 0.0001,
     velocity_diffusion: 0.9999,
-    dye_add_intensity: 5,
+    dye_add_intensity: 4,
     dye_add_radius: 0.001,
     dye_diffusion: 0.994,//8,
     viscosity: 0.8,

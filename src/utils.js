@@ -99,10 +99,11 @@ class Recorder {
 
         this.isRecording = false
 
-        canvas.addEventListener('click', () => {
-            if (this.isRecording) this.stop()
-            else this.start()
-        })
+        // Recorder is disabled until I make a tooltip explaining how it works
+        // canvas.addEventListener('click', () => {
+        //     if (this.isRecording) this.stop()
+        //     else this.start()
+        // })
 
         this.resetSimulation = resetSimulation
     }

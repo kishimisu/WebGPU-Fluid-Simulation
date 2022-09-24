@@ -154,6 +154,7 @@ fn main(@builtin(global_invocation_id) global_id : vec3<u32>) {
 
     ${ COMPUTE_START_DYE }
 
+    // var col_start = palette(uTime/8., vec3(0.875, 0.516, 0.909), vec3(0.731, 0.232, 0.309), vec3(1.566, 0.088, 1.466), vec3(0.825, 5.786, 3.131));
     // var col_start = palette(uTime/8., vec3(0.383, 0.659, 0.770), vec3(0.322, 0.366, 0.089), vec3(1.132, 1.321, 0.726), vec3(6.241, 4.902, 1.295));
     let col_start = palette(uTime/8., vec3(0.5), vec3(0.5), vec3(1), vec3(0.333, 0.667, 0.999));
 
