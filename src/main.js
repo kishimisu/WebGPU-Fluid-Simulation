@@ -13,7 +13,7 @@ const settings = {
     vorticity: 2,
     pressure_iterations: 100,
     buffer_view: 'dye',
-    input_symmetry: 'horizontal'
+    input_symmetry: 'none'
 }
 
 const globalUniforms = {}
@@ -45,7 +45,6 @@ async function main() {
     
     const pressure = new DynamicBuffer()
     const pressure0 = new DynamicBuffer()
-    const pressure1 = new DynamicBuffer()
 
     const vorticity = new DynamicBuffer()
 
@@ -115,20 +114,14 @@ async function main() {
         shader: boundaryPressureShader
     })
 
-    const pressureProgramA = new PressureProgram({
+    const pressureProgram = new PressureProgram({
         in_pressure: pressure,
         in_divergence: divergence,
         out_pressure: pressure0,
     })
-
-    const pressureProgramB = new PressureProgram({
-        in_pressure: pressure0,
-        in_divergence: divergence,
-        out_pressure: pressure1,
-    })
     
     const boundaryPressureProgram = new BoundaryProgram({
-        in_quantity: pressure1,
+        in_quantity: pressure0,
         out_quantity: pressure,
         shader: boundaryPressureShader
     })
@@ -199,9 +192,8 @@ async function main() {
         boundaryDivProgram.dispatch(passEncoder) // boundary conditions
         
         // Solve the jacobi-pressure equation
-        for (let i = 0; i < settings.pressure_iterations/2; i++) {
-            pressureProgramA.dispatch(passEncoder)
-            pressureProgramB.dispatch(passEncoder)
+        for (let i = 0; i < settings.pressure_iterations; i++) {
+            pressureProgram.dispatch(passEncoder)
             boundaryPressureProgram.dispatch(passEncoder) // boundary conditions
         }
 

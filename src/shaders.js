@@ -44,6 +44,16 @@ if (pos.x >= uGrid.w || pos.y >= uGrid.h) {
 
 let index = ID(pos.x, pos.y);`
 
+const SPLAT_CODE = `
+var m = uMouse.pos;
+var v = uMouse.vel*2.;
+
+var splat = createSplat(p, m, v, uRadius);
+if (uSymmetry == 1. || uSymmetry == 3.) {splat += createSplat(p, vec2(1. - m.x, m.y), v * vec2(-1., 1.), uRadius);}
+if (uSymmetry == 2. || uSymmetry == 3.) {splat += createSplat(p, vec2(m.x, 1. - m.y), v * vec2(1., -1.), uRadius);}
+if (uSymmetry == 3. || uSymmetry == 4.) {splat += createSplat(p, vec2(1. - m.x, 1. - m.y), v * vec2(-1., -1.), uRadius);}
+`
+
 /// APPLY FORCE SHADER ///
 
 const updateVelocityShader = /* wgsl */`
@@ -89,17 +99,12 @@ fn main(@builtin(global_invocation_id) global_id : vec3<u32>) {
     
     ${ COMPUTE_START }
 
-    var p = pos/vec2(uGrid.w, uGrid.h);
-    var m = uMouse.pos;
-
-    var splat = createSplat(p, m, uMouse.vel*4., uRadius);
-
-    if (uSymmetry == 1. || uSymmetry == 3.) {splat += createSplat(p, vec2(1. - m.x, m.y), uMouse.vel * vec2(-1., 1.)*4., uRadius);}
-    if (uSymmetry == 2. || uSymmetry == 3.) {splat += createSplat(p, vec2(m.x, 1. - m.y), uMouse.vel * vec2(1., -1.)*4., uRadius);}
-    if (uSymmetry == 3. || uSymmetry == 4.) {splat += createSplat(p, vec2(1. - m.x, 1. - m.y), uMouse.vel * vec2(-1., -1.)*4., uRadius);}
-
     let tmpT = uTime;
-    splat *= uForce * uDt * 100.;
+    var p = pos/vec2(uGrid.w, uGrid.h);
+
+    ${ SPLAT_CODE }
+    
+    splat *= uForce * uDt * 200.;
 
     x_out[index] = x_in[index]*uDiffusion + splat.x;
     y_out[index] = y_in[index]*uDiffusion + splat.y;
@@ -159,13 +164,8 @@ fn main(@builtin(global_invocation_id) global_id : vec3<u32>) {
     let col_start = palette(uTime/8., vec3(0.5), vec3(0.5), vec3(1), vec3(0.333, 0.667, 0.999));
 
     var p = pos/vec2(uGrid.dyeW, uGrid.dyeH);
-    var m = uMouse.pos;
 
-    var splat = createSplat(p, m, uMouse.vel, uRadius);
-
-    if (uSymmetry == 1. || uSymmetry == 3.) {splat += createSplat(p, vec2(1. - m.x, m.y), uMouse.vel * vec2(-1., 1.)*4., uRadius);}
-    if (uSymmetry == 2. || uSymmetry == 3.) {splat += createSplat(p, vec2(m.x, 1. - m.y), uMouse.vel * vec2(1., -1.)*4., uRadius);}
-    if (uSymmetry == 3. || uSymmetry == 4.) {splat += createSplat(p, vec2(1. - m.x, 1. - m.y), uMouse.vel * vec2(-1., -1.)*4., uRadius);}
+    ${ SPLAT_CODE }
 
     splat *= col_start * uForce * uDt * 100.;
 

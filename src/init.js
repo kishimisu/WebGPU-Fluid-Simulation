@@ -107,9 +107,9 @@ function initSizes() {
     // settings.dye_w = renderW
     // settings.dye_h = renderH
     // settings.dye_size = renderH
-    // settings.grid_w = renderW / 4
-    // settings.grid_h = renderH / 4
-    // settings.grid_size = renderH / 4
+    // settings.grid_w = Math.floor(renderW / 4)
+    // settings.grid_h = Math.floor(renderH / 4)
+    // settings.grid_size = Math.floor(renderH / 4)
 
     // Useful values for the simulation
     settings.rdx = settings.grid_size * 4
