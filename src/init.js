@@ -131,14 +131,14 @@ function initGUI() {
         globalUniforms.mouse_type.setValue(index)
     })
 
-    gui.add(settings, 'rdx').onChange(() => {
+    gui.add(settings, 'rdx', 32, 8000).onChange(() => {
         settings.dx = 1 / settings.rdx
-        grid.update(device.queue, [settings.grid_w, settings.grid_h, settings.dye_w, settings.dye_h, settings.dx, settings.rdx, settings.dyeRdx])
+        globalUniforms.gridSize.update(device.queue, [settings.grid_w, settings.grid_h, settings.dye_w, settings.dye_h, settings.dx, settings.rdx, settings.dyeRdx])
     })
 
-    gui.add(settings, 'dyeRdx').onChange(() => {
-        grid.update(device.queue, [settings.grid_w, settings.grid_h, settings.dye_w, settings.dye_h, settings.dx, settings.rdx, settings.dyeRdx])
-    })
+    // gui.add(settings, 'dyeRdx', 1, 20000).onChange(() => {
+    //     globalUniforms.gridSize.update(device.queue, [settings.grid_w, settings.grid_h, settings.dye_w, settings.dye_h, settings.dx, settings.rdx, settings.dyeRdx])
+    // })
 
     const buffer_types = ['dye', 'velocity', 'divergence', 'pressure', 'vorticity']
     
