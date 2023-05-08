@@ -50,7 +50,21 @@ async function initContext() {
     // Init buffer sizes
     initSizes()
 
+    // Resize event
+    let resizeTimeout
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimeout)
+        resizeTimeout = setTimeout(refreshSizes, 150)
+    })
+
     return true
+}
+
+function refreshSizes() {
+    initSizes()
+    initBuffers()
+    initPrograms()
+    globalUniforms.gridSize.needsUpdate = [settings.grid_w, settings.grid_h, settings.dye_w, settings.dye_h, settings.dx, settings.rdx, settings.dyeRdx]
 }
 
 // Init buffer & canvas dimensions to fit the screen while keeping the aspect ratio 
@@ -102,15 +116,6 @@ function initSizes() {
     settings.dye_w = dyeSize.w
     settings.dye_h = dyeSize.h
 
-    // const renderW = 8192
-    // const renderH = 1317
-    // settings.dye_w = renderW
-    // settings.dye_h = renderH
-    // settings.dye_size = renderH
-    // settings.grid_w = Math.floor(renderW / 4)
-    // settings.grid_h = Math.floor(renderH / 4)
-    // settings.grid_size = Math.floor(renderH / 4)
-
     // Useful values for the simulation
     settings.rdx = settings.grid_size * 4
     settings.dyeRdx = settings.dye_size * 4
@@ -121,34 +126,41 @@ function initSizes() {
     canvas.height = settings.dye_h
 }
 
+const RENDER_MODES = {
+    "Classic": 0, 
+    "Smoke 2D": 1, 
+    "Smoke 3D + Shadows": 2,
+    "Debug - Velocity": 3,
+    "Debug - Divergence": 4,
+    "Debug - Pressure": 5,
+    "Debug - Vorticity": 6,
+}
+const SIMULATION_GRID_SIZES = [32, 64, 128, 256, 512, 1024]
+const DYE_GRID_SIZES  = [128, 256, 512, 1024, 2048]
+
 // Initialize the GUI elements
 function initGUI() {
-    gui.add(settings, 'pressure_iterations', 0, 500)
+    gui.add(settings, 'pressure_iterations', 0, 50).name("Pressure Iterations")
 
     const symmetry_types = ['none', 'horizontal', 'vertical', 'both', 'center']
     gui.add(settings, 'input_symmetry', symmetry_types).onChange((type) => {
         let index = symmetry_types.indexOf(type)
         globalUniforms.mouse_type.setValue(index)
-    })
+    }).name("Mouse Symmetry")
 
-    gui.add(settings, 'rdx', 32, 8000).onChange(() => {
-        settings.dx = 1 / settings.rdx
-        globalUniforms.gridSize.update(device.queue, [settings.grid_w, settings.grid_h, settings.dye_w, settings.dye_h, settings.dx, settings.rdx, settings.dyeRdx])
-    })
-
-    // gui.add(settings, 'dyeRdx', 1, 20000).onChange(() => {
+    // gui.add(settings, 'rdx', 32, 8000).onChange(() => {
+    //     settings.dx = 1 / settings.rdx
     //     globalUniforms.gridSize.update(device.queue, [settings.grid_w, settings.grid_h, settings.dye_w, settings.dye_h, settings.dx, settings.rdx, settings.dyeRdx])
     // })
 
-    const buffer_types = ['dye', 'velocity', 'divergence', 'pressure', 'vorticity']
-    
-    gui.add(settings, 'buffer_view', buffer_types).onChange((type) => {
-        let multiplier = [1, 100, 10, 1e6, 1][buffer_types.indexOf(type)]
-        globalUniforms.render_intensity_multiplier.setValue(multiplier)
-        globalUniforms.render_dye_buffer.setValue(type === 'dye' ? 1 : 0)
-    })
+    gui.add(settings, 'reset').name("Clear canvas")
 
-    gui.add(settings, 'reset')
-
-    // gui.hide()
+    smokeFolder = gui.addFolder('Smoke Parameters')
+    smokeFolder.add(settings, 'raymarch_steps', 5, 20, 1).name("3D resolution")
+    smokeFolder.add(settings, 'light_height', 0.5, 1, 0.001).name("Light Elevation")
+    smokeFolder.add(settings, 'light_intensity', 0, 1, 0.001).name("Light Intensity")
+    smokeFolder.add(settings, 'light_falloff', 0.5, 10, 0.001).name("Light Falloff")
+    smokeFolder.add(settings, 'enable_shadows').name("Enable Shadows")
+    smokeFolder.add(settings, 'shadow_intensity', 0, 50, 0.001).name("Shadow Intensity")
+    smokeFolder.hide()
 }

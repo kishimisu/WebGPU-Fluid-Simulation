@@ -37,23 +37,30 @@ class DynamicBuffer {
 
 // Manage uniform buffers relative to the compute shaders & the gui
 class Uniform {
-    constructor(name, {size = 1, value, min, max, step} = {}) {
+    constructor(name, {size, value, min, max, step, onChange, displayName, addToGUI = true} = {}) {
         this.name = name
-        this.size = size
+        this.size = size ?? (typeof(value) === "object" ? value.length : 1)
         this.needsUpdate = false
         
-        if (size === 1) {
-            if (!settings[name]) {
+        if (this.size === 1) {
+            if (settings[name] == null) {
                 settings[name] = value ?? 0
                 this.alwaysUpdate = true
             }
-            else gui.add(settings, name, min, max, step).onChange(() => this.needsUpdate = true)
+            else if (addToGUI) {
+                gui.add(settings, name, min, max, step)
+                    .onChange((v) => {
+                        if (onChange) onChange(v)
+                        this.needsUpdate = true
+                    })
+                    .name(displayName ?? name)
+            }
         } 
         
         if (this.size === 1 || value != null) {
             this.buffer = device.createBuffer({
                 mappedAtCreation: true,
-                size: size * 4,
+                size: this.size * 4,
                 usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
             })
 
@@ -62,7 +69,7 @@ class Uniform {
             this.buffer.unmap();
         } else {
             this.buffer = device.createBuffer({
-                size: size * 4,
+                size: this.size * 4,
                 usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
             })
         }
@@ -78,7 +85,8 @@ class Uniform {
     // Update the GPU buffer if the value has changed
     update(queue, value) {
         if (this.needsUpdate || this.alwaysUpdate || value != null) {
-            queue.writeBuffer(this.buffer, 0, new Float32Array(value ?? [settings[this.name]]), 0, this.size)
+            if (typeof(this.needsUpdate) !== "boolean") value = this.needsUpdate
+            queue.writeBuffer(this.buffer, 0, new Float32Array(value ?? [parseFloat(settings[this.name])]), 0, this.size)
             this.needsUpdate = false
         }
     }
