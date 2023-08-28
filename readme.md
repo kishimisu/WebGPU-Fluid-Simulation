@@ -13,7 +13,7 @@ I'll update this readme once it will be officially supported.
 The simplest solution that worked for me was to download [Google Chrome Canary](https://www.google.com/chrome/canary/), then navigate to `chrome://flags` and enable `Unsafe WebGPU` & `WebGPU Developer Features` (for better security, don't navigate the web with these features on).
 Other methods can be found [here](https://developer.chrome.com/en/docs/web-platform/webgpu/#use).
 
-Once you have WebGPU enabled, you can start [playing with the live demo](https://indiana-dev.github.io/WebGPU-Fluid-Simulation/) !
+Once you have WebGPU enabled, you can start [playing with the live demo](https://kishimisu.github.io/WebGPU-Fluid-Simulation/) !
 
 ## Context
 
